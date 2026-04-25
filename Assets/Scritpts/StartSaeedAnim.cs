@@ -17,16 +17,20 @@ public class StartSaeedAnim : MonoBehaviour
     [SerializeField] private TextMeshProUGUI firstDialogue;
     [SerializeField] private TextMeshProUGUI secondDialogue;
     [SerializeField] private GameObject choicePanel;
-    [SerializeField] private Button[] choiceButton;
     [SerializeField] private GameObject firstScene;
+    [SerializeField] private Button[] choiceButton;
+    [SerializeField] private Color hoverColor;
 
     [Header("PRIVATE")]
+    private Graphic graphic;
+    private Color initialColor;
+    private float buttonScaleFactor = 1.2f;
     private float zero = 0f;
     private float delay = 0.5f;
     private Vector3 targetScale = Vector3.one;
     private float transitionDuration  = 3f;
     private LeanTweenType easeLinear = LeanTweenType.linear;
-
+    private LeanTweenType easeIn = LeanTweenType.easeInOutSine;
     // selected choice button
     private string selectedChoiceName;
 
@@ -48,8 +52,14 @@ public class StartSaeedAnim : MonoBehaviour
 
     private readonly string secondDialogueString = "“Great! Let’s choose a topic to explore " +
         "together. What would you like to learn today?”";
-    
-
+/*
+    private void Start()
+    {
+        graphic = GetComponent<Graphic>();
+        if (graphic != null)
+            initialColor = graphic.color;
+    }
+  */
     private void Awake()
     {
         SetObjectState(saeed, false);
@@ -65,7 +75,6 @@ public class StartSaeedAnim : MonoBehaviour
         HideButtons();
         StartCoroutine(LaunchGame());
     }
-
     IEnumerator LaunchGame()
     {    
         StartTransition();
@@ -99,7 +108,8 @@ public class StartSaeedAnim : MonoBehaviour
     private void StartTransition()
     {
         CanvasGroup canvas = transitionCanvas.GetComponent<CanvasGroup>();
-        LeanTween.alphaCanvas(canvas, zero, transitionDuration).setEase(easeLinear).setOnComplete(() =>
+        LeanTween.alphaCanvas(canvas, zero, transitionDuration)
+            .setEase(easeLinear).setOnComplete(() =>
         {
             transitionCanvas.SetActive(false);
         });
@@ -118,7 +128,6 @@ public class StartSaeedAnim : MonoBehaviour
             yield return new WaitForSeconds(dialogueSpeed);
         }
         onComplete?.Invoke();
-
     }
 
     // disable the next button, fade out the dialogue text and the button
@@ -128,7 +137,8 @@ public class StartSaeedAnim : MonoBehaviour
     {
         continueButton.interactable = false;
         nextButton.interactable = false;
-        LeanTween.alpha(firstDialogue.gameObject, zero, delay).setOnUpdate((float val) =>
+        LeanTween.alpha(firstDialogue.gameObject, zero, delay)
+            .setOnUpdate((float val) =>
             {
                 firstDialogue.alpha = val;
             }).
@@ -167,7 +177,17 @@ public class StartSaeedAnim : MonoBehaviour
         }
     }
 
-    private void DisableButtonSelection()
+    // scale up and show button
+    private void ShowButton(Button button)
+    {
+        button.gameObject.SetActive(true);
+        button.gameObject.transform.localScale = Vector3.zero;
+        LeanTween.scale(button.gameObject, targetScale, buttonDuration)
+            .setDelay(delay).setEase(easeElastic);
+    }
+    
+    // disable all choice buttons
+    public void DisableButtonSelection()
     {
         foreach (Button btn in choiceButton)
         {
@@ -185,12 +205,46 @@ public class StartSaeedAnim : MonoBehaviour
             ChoiceController choice = button.GetComponent<ChoiceController>();
             if (choice.isChoiceSelected)
             {
-                selectedChoiceName = choice.buttonName;
-                DisableButtonSelection();
+               selectedChoiceName = choice.buttonName;
+               DisableButtonSelection();
                 break;
             }
         }
     }
+
+    public void ScaleSelectedButton()
+    {
+        foreach (Button button in choiceButton)
+        {
+            if (button == null) continue;
+
+            ChoiceController choice = button.GetComponent<ChoiceController>();
+            var graphic = button.GetComponent<Graphic>();
+            if (choice != null && graphic != null)
+            {
+                initialColor = graphic.color;
+                if (choice.isChoiceSelected)
+                {
+                    LeanTween.scale(button.gameObject, Vector3.one * buttonScaleFactor, 0.2f).setEase(easeQuad);
+                    LeanTween.value(button.gameObject, graphic.color, hoverColor, buttonDuration)
+                        .setOnUpdate((Color col) => { graphic.color = col; });
+                    Debug.Log("pointer clided selectee");
+
+                }
+                else
+                {
+                    choice.isChoiceSelected = false;
+                    LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
+                    LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
+                        .setOnUpdate((Color col) => { graphic.color = col; });
+                    Debug.Log("pointer not button clided selectee");
+
+                }
+            }
+        }
+    }
+  
+
     public void PressContineuButton()
     {
         CheckSelectedButton();
@@ -216,6 +270,12 @@ public class StartSaeedAnim : MonoBehaviour
             obj.transform.localScale = scale;
     }
 
+    // scale dialogue box
+    private void ScaleDialogueBox(GameObject gameObject, LeanTweenType leanType, float duration)
+    {
+        LeanTween.scale(gameObject, targetScale, duration).setDelay(delay).setEase(leanType);
+    }
+
     // set choice buttons hidden and scale to zero
     private void HideButtons()
     {
@@ -227,19 +287,5 @@ public class StartSaeedAnim : MonoBehaviour
                 button.transform.localScale = Vector3.zero;
             }
         }
-    }
-
-    // scale dialogue box
-    private void ScaleDialogueBox(GameObject gameObject, LeanTweenType leanType, float duration)
-    {
-        LeanTween.scale(gameObject, targetScale, duration).setDelay(delay).setEase(leanType);
-    }
-
-    // scale up and show button
-    private void ShowButton(Button button)
-    {
-        button.gameObject.SetActive(true);
-        button.gameObject.transform.localScale = Vector3.zero;
-        LeanTween.scale(button.gameObject, targetScale, buttonDuration).setDelay(delay).setEase(easeElastic);
     }
 }

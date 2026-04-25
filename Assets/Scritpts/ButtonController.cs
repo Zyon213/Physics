@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+
     // button scale variables for hover
     private float buttonScaleFactor = 1.2f;
     private float buttonDuration = 0.2f;
@@ -39,7 +40,21 @@ public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public void OnPointerExit(PointerEventData eventData)
     {
         LeanTween.cancel(gameObject);
-        LeanTween.scale(gameObject, targetScale, buttonDuration).setEase(easeIn);
-        LeanTween.value(gameObject, graphic.color, initialColor, buttonDuration).setOnUpdate((Color col) => { graphic.color = col; });
+        ChoiceController control= this.gameObject.GetComponent<ChoiceController>();
+
+        
+        if (control != null && control.isChoiceSelected)
+        {
+          LeanTween.scale(gameObject, Vector3.one * buttonScaleFactor, buttonDuration).setEase(LeanTweenType.easeOutQuad);
+            LeanTween.value(gameObject, graphic.color, hoverColor, buttonDuration).setOnUpdate((Color col) => { graphic.color = col; });
+            Debug.Log("selected scaled");
+        }
+       else
+        {
+            Debug.Log("hover scaledoen");
+            LeanTween.scale(gameObject, Vector3.one, buttonDuration).setEase(easeIn);
+            LeanTween.value(gameObject, graphic.color, initialColor, buttonDuration).setOnUpdate((Color col) => { graphic.color = col; });
+        }
     }
+    
 }

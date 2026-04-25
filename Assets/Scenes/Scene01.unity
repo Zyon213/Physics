@@ -234,12 +234,13 @@ MonoBehaviour:
   firstDialogue: {fileID: 1188743586}
   secondDialogue: {fileID: 455053869}
   choicePanel: {fileID: 358537963}
+  firstScene: {fileID: 726089681}
   choiceButton:
   - {fileID: 260446736}
   - {fileID: 1326151547}
   - {fileID: 1466600692}
   - {fileID: 860886257}
-  firstScene: {fileID: 726089681}
+  hoverColor: {r: 0.26352793, g: 0.59872895, b: 0.8867924, a: 1}
 --- !u!4 &54359728
 Transform:
   m_ObjectHideFlags: 0
@@ -838,6 +839,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   continueButton: {fileID: 129027243}
+  gameManager: {fileID: 54359726}
   isChoiceSelected: 0
   buttonName: 
 --- !u!1001 &319029457
@@ -1818,6 +1820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   continueButton: {fileID: 129027243}
+  gameManager: {fileID: 54359726}
   isChoiceSelected: 0
   buttonName: 
 --- !u!4 &888234854 stripped
@@ -2903,6 +2906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   continueButton: {fileID: 129027243}
+  gameManager: {fileID: 54359726}
   isChoiceSelected: 0
   buttonName: 
 --- !u!4 &1342292347 stripped
@@ -3290,6 +3294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   continueButton: {fileID: 129027243}
+  gameManager: {fileID: 54359726}
   isChoiceSelected: 0
   buttonName: 
 --- !u!1 &1512870628
@@ -3310,7 +3315,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1512870629
 RectTransform:
   m_ObjectHideFlags: 0
