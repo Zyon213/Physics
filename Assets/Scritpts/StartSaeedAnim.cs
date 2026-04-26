@@ -24,7 +24,8 @@ public class StartSaeedAnim : MonoBehaviour
     public Color initialColor;
 
     [Header("PRIVATE")]
-    private Graphic graphic;
+    private LoadScene loadScene;
+
     private float buttonScaleFactor = 1.2f;
     private float zero = 0f;
     private float delay = 0.5f;
@@ -66,6 +67,7 @@ public class StartSaeedAnim : MonoBehaviour
         SetObjectScale(nextButton.gameObject, Vector3.zero);
         SetObjectScale(continueButton.gameObject, Vector3.zero);
 
+        loadScene = GetComponent<LoadScene>();
         HideButtons();
         StartCoroutine(LaunchGame());
     }
@@ -205,6 +207,7 @@ public class StartSaeedAnim : MonoBehaviour
         }
     }
 
+    // get the selected button 
     public void SelectedButton(Button selectedBtn)
     {
         foreach (Button btn in choiceButton)
@@ -218,6 +221,7 @@ public class StartSaeedAnim : MonoBehaviour
 
         ScaleSelectedButton();
     }
+    // scale the selected button and scale down to normal the rest;
     public void ScaleSelectedButton()
     {
         foreach (Button button in choiceButton)
@@ -226,7 +230,6 @@ public class StartSaeedAnim : MonoBehaviour
 
             ChoiceController choice = button.GetComponent<ChoiceController>();
             var graphic = button.GetComponent<Graphic>();
-         //   initialColor = graphic.color;
             if (choice != null && graphic != null)
             {
                 if (choice.isChoiceSelected)
@@ -247,15 +250,14 @@ public class StartSaeedAnim : MonoBehaviour
         }
     }
   
-    public void PressContineuButton()
+    // load next scene
+
+    public void PressContinue()
     {
         CheckSelectedButton();
         if (string.IsNullOrEmpty(selectedChoiceName))
             return;
-        LeanTween.scale(firstScene, Vector3.zero, 1f).setEase(LeanTweenType.easeInBack).setOnComplete(() =>
-        {
-            SceneManager.LoadScene(selectedChoiceName, LoadSceneMode.Additive);
-        });
+        loadScene.CubeTransition(selectedChoiceName);
     }
 
     // set game object state
