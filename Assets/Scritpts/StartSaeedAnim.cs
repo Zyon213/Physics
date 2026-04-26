@@ -21,9 +21,10 @@ public class StartSaeedAnim : MonoBehaviour
     [SerializeField] private Button[] choiceButton;
     [SerializeField] private Color hoverColor;
 
+    public Color initialColor;
+
     [Header("PRIVATE")]
     private Graphic graphic;
-    private Color initialColor;
     private float buttonScaleFactor = 1.2f;
     private float zero = 0f;
     private float delay = 0.5f;
@@ -52,14 +53,7 @@ public class StartSaeedAnim : MonoBehaviour
 
     private readonly string secondDialogueString = "“Great! Let’s choose a topic to explore " +
         "together. What would you like to learn today?”";
-/*
-    private void Start()
-    {
-        graphic = GetComponent<Graphic>();
-        if (graphic != null)
-            initialColor = graphic.color;
-    }
-  */
+
     private void Awake()
     {
         SetObjectState(saeed, false);
@@ -203,15 +197,27 @@ public class StartSaeedAnim : MonoBehaviour
         foreach (Button button in choiceButton)
         {
             ChoiceController choice = button.GetComponent<ChoiceController>();
-            if (choice.isChoiceSelected)
+            if (choice != null && choice.isChoiceSelected)
             {
                selectedChoiceName = choice.buttonName;
-               DisableButtonSelection();
                 break;
             }
         }
     }
 
+    public void SelectedButton(Button selectedBtn)
+    {
+        foreach (Button btn in choiceButton)
+        {
+            if (btn == null) continue;
+            ChoiceController choice = btn.GetComponent<ChoiceController>();
+            if (choice == null) continue;
+            choice.isChoiceSelected = (btn == selectedBtn);
+            choice.buttonName = btn.name;
+        }
+
+        ScaleSelectedButton();
+    }
     public void ScaleSelectedButton()
     {
         foreach (Button button in choiceButton)
@@ -220,16 +226,15 @@ public class StartSaeedAnim : MonoBehaviour
 
             ChoiceController choice = button.GetComponent<ChoiceController>();
             var graphic = button.GetComponent<Graphic>();
+         //   initialColor = graphic.color;
             if (choice != null && graphic != null)
             {
-                initialColor = graphic.color;
                 if (choice.isChoiceSelected)
                 {
-                    LeanTween.scale(button.gameObject, Vector3.one * buttonScaleFactor, 0.2f).setEase(easeQuad);
+                    LeanTween.scale(button.gameObject, Vector3.one * buttonScaleFactor, 0.2f)
+                        .setEase(easeQuad);
                     LeanTween.value(button.gameObject, graphic.color, hoverColor, buttonDuration)
                         .setOnUpdate((Color col) => { graphic.color = col; });
-                    Debug.Log("pointer clided selectee");
-
                 }
                 else
                 {
@@ -237,14 +242,11 @@ public class StartSaeedAnim : MonoBehaviour
                     LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
                     LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
                         .setOnUpdate((Color col) => { graphic.color = col; });
-                    Debug.Log("pointer not button clided selectee");
-
                 }
             }
         }
     }
   
-
     public void PressContineuButton()
     {
         CheckSelectedButton();

@@ -26,13 +26,13 @@ public class ChoiceController : MonoBehaviour, IPointerDownHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("pointer clided");
-
         isChoiceSelected = true;
         buttonName = gameObject.name;
         continueButton.interactable = true;
-        Button button = GetComponent<Button>();
+        Button btn = GetComponent<Button>();
         if (saeed != null)
-            saeed.ScaleSelectedButton();
+        {
+            saeed.SelectedButton(btn);
+        }
     }
 }

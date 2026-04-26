@@ -241,6 +241,7 @@ MonoBehaviour:
   - {fileID: 1466600692}
   - {fileID: 860886257}
   hoverColor: {r: 0.26352793, g: 0.59872895, b: 0.8867924, a: 1}
+  initialColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &54359728
 Transform:
   m_ObjectHideFlags: 0
@@ -825,7 +826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a6e8ed506cb74343b087f79b7d5eaa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverColor: {r: 0.5330188, g: 0.7857004, b: 1, a: 1}
+  hoverColor: {r: 0.53333336, g: 0.78431374, b: 1, a: 1}
 --- !u!114 &260446740
 MonoBehaviour:
   m_ObjectHideFlags: 0
