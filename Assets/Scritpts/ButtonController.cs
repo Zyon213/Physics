@@ -21,8 +21,8 @@ public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private void Start()
     {
         graphic = GetComponent<Graphic>();
-        if (graphic != null)
-            initialColor = graphic.color;
+   //     if (graphic != null)
+    //        initialColor = graphic.color;
     }
 
     // scale up and change color buttons when hover
@@ -42,18 +42,33 @@ public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public void OnPointerExit(PointerEventData eventData)
     {
         LeanTween.cancel(gameObject);
-
-        LeanTween.scale(gameObject, Vector3.one, buttonDuration)
-            .setEase(easeIn);
-        LeanTween.value(gameObject, graphic.color, initialColor, buttonDuration)
-            .setOnUpdate((Color col) => { graphic.color = col; });
-
+        /*
+                LeanTween.scale(gameObject, Vector3.one, buttonDuration)
+                    .setEase(easeIn);
+                LeanTween.value(gameObject, graphic.color, graphic.color, buttonDuration)
+                    .setOnUpdate((Color col) => { graphic.color = col; });
+        */
         ChoiceController control = gameObject.GetComponent<ChoiceController>();
+        AnswerController answer = gameObject.GetComponent<AnswerController>();
         if (control != null && control.isChoiceSelected)
         {
             LeanTween.scale(gameObject, Vector3.one * buttonScaleFactor, buttonDuration)
                 .setEase(LeanTweenType.easeOutQuad);
             LeanTween.value(gameObject, graphic.color, hoverColor, buttonDuration)
+                .setOnUpdate((Color col) => { graphic.color = col; });
+        }
+        else if (answer != null && answer.isChoiceSelected)
+        {
+            LeanTween.scale(gameObject, Vector3.one * buttonScaleFactor, 0.2f)
+                .setEase(LeanTweenType.easeOutQuad);
+            LeanTween.value(gameObject, graphic.color, hoverColor, buttonDuration)
+                .setOnUpdate((Color col) => { graphic.color = col; });
+        }
+        else
+        {
+            LeanTween.scale(gameObject, Vector3.one, buttonDuration)
+                .setEase(easeIn);
+            LeanTween.value(gameObject, graphic.color, initialColor, buttonDuration)
                 .setOnUpdate((Color col) => { graphic.color = col; });
         }
     }

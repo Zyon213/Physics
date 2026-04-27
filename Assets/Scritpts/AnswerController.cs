@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class AnswerController : MonoBehaviour
+public class AnswerController : MonoBehaviour, IPointerDownHandler
 {
     [Header("SERIALIZEFIELD")]
     [SerializeField] private Button continueButton;

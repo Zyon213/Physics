@@ -14,6 +14,12 @@ public class SaeedMoves : MonoBehaviour
     [SerializeField] private GameObject earth;
     [SerializeField] private GameObject mars;
     [SerializeField] private Button[] answerButtons;
+    [SerializeField] private GameObject hintPage;
+    [SerializeField] private GameObject correctPage;
+    [SerializeField] private GameObject firstQuestion;
+
+    [SerializeField] private GameObject secondQuestion;
+
 
     private LeanTweenType easeElastic = LeanTweenType.easeOutElastic;
     private LeanTweenType easeBack = LeanTweenType.easeOutBack;
@@ -21,6 +27,7 @@ public class SaeedMoves : MonoBehaviour
     private Animator anim;
     private DialogueController dialogueController;
     private Coroutine questionCorotine;
+    private LoadScene loadScene;
 
 
     private readonly string firstText = "Scenario: You are the pilot of the Hope Probe II," +
@@ -50,8 +57,10 @@ public class SaeedMoves : MonoBehaviour
         dialogueController.SetObjectState(earth, false);
         dialogueController.SetObjectState(mars, false);
         dialogueController.HideButtons(answerButtons);
+        dialogueController.SetObjectState(hintPage, false);
+        dialogueController.SetObjectState(correctPage, false);
+        dialogueController.SetObjectState(secondQuestion, false);
         MoveSaeed();
-
     }
 
     // move and scale down saeed
@@ -66,11 +75,11 @@ public class SaeedMoves : MonoBehaviour
         LeanTween.scale(saeed, new Vector3(0.35f, 0.35f, 1f), 0.8f)
             .setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
-                StartCoroutine(FirstQuestion());
+                StartCoroutine(LoadQuestion());
             });
     }
 
-    IEnumerator FirstQuestion()
+    IEnumerator LoadQuestion()
     {
         yield return new WaitForEndOfFrame();
         dialogueController.ScaleDialogueBox(dialogueBox);
@@ -87,4 +96,33 @@ public class SaeedMoves : MonoBehaviour
         dialogueController.ScaleObject(mars, Vector3.one * 4, easeElastic, 2f);
     }
 
+    public void PressCheckAnswer()
+    {
+        dialogueController.CheckSelectedButton();
+        if (string.IsNullOrEmpty(dialogueController.selectedChoiceName))
+        {
+            Debug.Log("stirng is null");
+            return;
+        }
+
+        if (dialogueController.selectedChoiceName.Equals("Wrong"))
+            dialogueController.ScaleObject(hintPage, Vector3.one, easeElastic, 2f);
+        else if (dialogueController.selectedChoiceName.Equals("Correct"))
+            dialogueController.ScaleObject(correctPage, Vector3.one, easeElastic, 2f);
+
+    }
+
+    public void PressTryAgain()
+    {
+        hintPage.SetActive(false);
+        dialogueController.ResetAnswerButtons();
+    }
+
+    public void PressContinue()
+    {
+        correctPage.SetActive(false);
+        firstQuestion.SetActive(false);
+         loadScene.GateTransitionOnly(secondQuestion);
+      //  secondQuestion.SetActive(true);
+    }
 }

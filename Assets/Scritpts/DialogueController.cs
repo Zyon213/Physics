@@ -25,8 +25,8 @@ public class DialogueController : MonoBehaviour
     private float transitionDuration = 3f;
     private LeanTweenType easeLinear = LeanTweenType.linear;
     private LeanTweenType easeIn = LeanTweenType.easeInOutSine;
-    // selected choice button
-    private string selectedChoiceName;
+    // selected answer button
+    public string selectedChoiceName;
 
     // dialogue box varialbles
     private float dialogueBoxDuration = 0.75f;
@@ -71,7 +71,7 @@ public class DialogueController : MonoBehaviour
         if (text != null)
             corotine = StartCoroutine(TypeText(tmpro, text, () =>
             {
-                ShowButton(button,buttonDuration);
+                ShowButton(button, buttonDuration);
                 StartCoroutine(ShowAnswerButtons(buttons));
 
             }));
@@ -93,7 +93,7 @@ public class DialogueController : MonoBehaviour
             obj.transform.localScale = Vector3.zero;
         }
     }
-// Display answer buttons
+    // Display answer buttons
     public IEnumerator ShowAnswerButtons(Button[] buttons)
     {
         yield return new WaitForEndOfFrame();
@@ -139,11 +139,11 @@ public class DialogueController : MonoBehaviour
         {
             if (button == null) continue;
 
-            ChoiceController choice = button.GetComponent<ChoiceController>();
+            AnswerController answer = button.GetComponent<AnswerController>();
             var graphic = button.GetComponent<Graphic>();
-            if (choice != null && graphic != null)
+            if (answer != null && graphic != null)
             {
-                if (choice.isChoiceSelected)
+                if (answer.isChoiceSelected)
                 {
                     LeanTween.scale(button.gameObject, Vector3.one * buttonScaleFactor, 0.2f)
                         .setEase(easeQuad);
@@ -152,7 +152,7 @@ public class DialogueController : MonoBehaviour
                 }
                 else
                 {
-                    choice.isChoiceSelected = false;
+                    answer.isChoiceSelected = false;
                     LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
                     LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
                         .setOnUpdate((Color col) => { graphic.color = col; });
@@ -161,27 +161,40 @@ public class DialogueController : MonoBehaviour
         }
 
     }
-        private void CheckSelectedButton(Button[] buttons)
+    public void CheckSelectedButton()
+    {
+        selectedChoiceName = null;
+        foreach (Button button in answerButtons)
         {
-            selectedChoiceName = null;
-            foreach (Button button in buttons)
+            AnswerController answer = button.GetComponent<AnswerController>();
+            if (answer != null && answer.isChoiceSelected)
             {
-                ChoiceController choice = button.GetComponent<ChoiceController>();
-                if (choice != null && choice.isChoiceSelected)
-                {
-                    selectedChoiceName = choice.buttonName;
-                    break;
-                }
+                selectedChoiceName = answer.buttonName;
+                break;
             }
         }
-        // load next scene
-
-        public void PressContinueAnser(Button[] buttons)
+    }
+   
+    // reset answer buttons
+    public void ResetAnswerButtons()
+    {
+        selectedChoiceName = null;
+        foreach (Button button in answerButtons)
         {
-            CheckSelectedButton(buttons);
-            if (string.IsNullOrEmpty(selectedChoiceName))
-                return;
-            loadScene.CubeTransition(selectedChoiceName);
+            if (button == null) continue;
+
+            AnswerController answer = button.GetComponent<AnswerController>();
+            var graphic = button.GetComponent<Graphic>();
+            if (answer != null && graphic != null)
+            {
+                answer.isChoiceSelected = false;
+                LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
+                LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
+                    .setOnUpdate((Color col) => { graphic.color = col; });
+                
+            }
+
         }
     }
+}
 

@@ -81,6 +81,16 @@ public class LoadScene : MonoBehaviour
             .setOnComplete(() => SceneManager.LoadScene(sceneName));
     }
 
+    public void GateTransitionOnly(GameObject obj)
+    {
+        float screenHeight = Screen.height;
+
+        LeanTween.moveY(topBar.GetComponent<RectTransform>(), -screenHeight / 2, 2f)
+            .setEaseOutQuint();
+        LeanTween.moveY(bottomBar.GetComponent<RectTransform>(), screenHeight / 2, 2f)
+            .setEaseOutQuint()
+            .setOnComplete(() => obj.SetActive(true));
+    }
     // Cubes scale transition
     public void CubeTransition(string sceneName)
     {
