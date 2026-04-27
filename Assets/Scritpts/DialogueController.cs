@@ -1,0 +1,187 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+
+public class DialogueController : MonoBehaviour
+{
+    private float dialogueSpeed = 0.01f;
+    private float buttonDuration = 2f;
+    private Coroutine corotine;
+    private LeanTweenType easeElastic = LeanTweenType.easeOutElastic;
+    [SerializeField] private Color hoverColor;
+    [SerializeField] private Button[] answerButtons;
+
+    public Color initialColor;
+
+    [Header("PRIVATE")]
+    private LoadScene loadScene;
+
+    private float buttonScaleFactor = 1.2f;
+    private float zero = 0f;
+    private float delay = 0.5f;
+    private Vector3 targetScale = Vector3.one;
+    private float transitionDuration = 3f;
+    private LeanTweenType easeLinear = LeanTweenType.linear;
+    private LeanTweenType easeIn = LeanTweenType.easeInOutSine;
+    // selected choice button
+    private string selectedChoiceName;
+
+    // dialogue box varialbles
+    private float dialogueBoxDuration = 0.75f;
+    private LeanTweenType easeQuad = LeanTweenType.easeOutQuad;
+
+
+    private void Start()
+    {
+        loadScene = GetComponent<LoadScene>();
+    }
+    // scale dialogue box
+    public void ScaleDialogueBox(GameObject gameObject)
+    {
+        gameObject.SetActive(true);
+        LeanTween.scale(gameObject, Vector3.one, 0.8f).
+            setEase(LeanTweenType.easeInOutQuad);
+    }
+
+    public void ScaleObject(GameObject gameObject, Vector3 scale, LeanTweenType leanType, float duration)
+    {
+        gameObject.SetActive(true);
+        LeanTween.scale(gameObject, scale, duration).
+            setEase(leanType);
+    }
+    // dialogue text writing
+    public IEnumerator TypeText(TextMeshProUGUI tmpro, string dialogue, System.Action onComplete)
+    {
+        tmpro.text = dialogue;
+        tmpro.maxVisibleCharacters = 0;
+
+        int length = dialogue.Length;
+        for (int i = 0; i <= length; i++)
+        {
+            tmpro.maxVisibleCharacters = i;
+            yield return new WaitForSeconds(dialogueSpeed);
+        }
+        onComplete?.Invoke();
+    }
+
+    public void ShowQuestion(Button[] buttons, Button button, TextMeshProUGUI tmpro, string text)
+    {
+        if (text != null)
+            corotine = StartCoroutine(TypeText(tmpro, text, () =>
+            {
+                ShowButton(button,buttonDuration);
+                StartCoroutine(ShowAnswerButtons(buttons));
+
+            }));
+    }
+
+    public void ShowButton(Button button, float duration)
+    {
+        button.gameObject.SetActive(true);
+        button.gameObject.transform.localScale = Vector3.zero;
+        LeanTween.scale(button.gameObject, Vector3.one, duration)
+            .setDelay(0.2f).setEase(easeElastic);
+    }
+
+    public void SetObjectState(GameObject obj, bool state)
+    {
+        if (obj != null)
+        {
+            obj.SetActive(state);
+            obj.transform.localScale = Vector3.zero;
+        }
+    }
+// Display answer buttons
+    public IEnumerator ShowAnswerButtons(Button[] buttons)
+    {
+        yield return new WaitForEndOfFrame();
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            ShowButton(buttons[i], 1.5f);
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    public void HideButtons(Button[] buttons)
+    {
+        if (buttons != null)
+        {
+            foreach (Button button in buttons)
+            {
+                button.gameObject.SetActive(false);
+                button.transform.localScale = Vector3.zero;
+            }
+        }
+    }
+
+
+    // get the selected button 
+    public void SelectedButton(Button selectedBtn)
+    {
+        foreach (Button btn in answerButtons)
+        {
+            if (btn == null) continue;
+            AnswerController answer = btn.GetComponent<AnswerController>();
+            if (answer == null) continue;
+            answer.isChoiceSelected = (btn == selectedBtn);
+            answer.buttonName = btn.name;
+        }
+
+        ScaleSelectedButton();
+    }
+    // scale the selected button and scale down to normal the rest;
+    public void ScaleSelectedButton()
+    {
+        foreach (Button button in answerButtons)
+        {
+            if (button == null) continue;
+
+            ChoiceController choice = button.GetComponent<ChoiceController>();
+            var graphic = button.GetComponent<Graphic>();
+            if (choice != null && graphic != null)
+            {
+                if (choice.isChoiceSelected)
+                {
+                    LeanTween.scale(button.gameObject, Vector3.one * buttonScaleFactor, 0.2f)
+                        .setEase(easeQuad);
+                    LeanTween.value(button.gameObject, graphic.color, hoverColor, buttonDuration)
+                        .setOnUpdate((Color col) => { graphic.color = col; });
+                }
+                else
+                {
+                    choice.isChoiceSelected = false;
+                    LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
+                    LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
+                        .setOnUpdate((Color col) => { graphic.color = col; });
+                }
+            }
+        }
+
+    }
+        private void CheckSelectedButton(Button[] buttons)
+        {
+            selectedChoiceName = null;
+            foreach (Button button in buttons)
+            {
+                ChoiceController choice = button.GetComponent<ChoiceController>();
+                if (choice != null && choice.isChoiceSelected)
+                {
+                    selectedChoiceName = choice.buttonName;
+                    break;
+                }
+            }
+        }
+        // load next scene
+
+        public void PressContinueAnser(Button[] buttons)
+        {
+            CheckSelectedButton(buttons);
+            if (string.IsNullOrEmpty(selectedChoiceName))
+                return;
+            loadScene.CubeTransition(selectedChoiceName);
+        }
+    }
+

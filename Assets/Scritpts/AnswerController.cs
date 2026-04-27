@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
-public class ChoiceController : MonoBehaviour, IPointerDownHandler
+public class AnswerController : MonoBehaviour
 {
     [Header("SERIALIZEFIELD")]
     [SerializeField] private Button continueButton;
     [SerializeField] private GameObject gameManager;
 
     [Header("PRIVATE")]
-    private StartSaeedAnim saeedStartAnim;
+    private DialogueController dialogueController;
 
     [Header("PUBLIC")]
     public bool isChoiceSelected = false;
@@ -21,7 +20,7 @@ public class ChoiceController : MonoBehaviour, IPointerDownHandler
     {
         if (gameManager != null)
         {
-            saeedStartAnim = gameManager.GetComponent<StartSaeedAnim>();
+            dialogueController = gameManager.GetComponent<DialogueController>();
         }
     }
     public void OnPointerDown(PointerEventData eventData)
@@ -30,9 +29,9 @@ public class ChoiceController : MonoBehaviour, IPointerDownHandler
         buttonName = gameObject.name;
         continueButton.interactable = true;
         Button btn = GetComponent<Button>();
-        if (saeedStartAnim != null)
+        if (dialogueController != null)
         {
-            saeedStartAnim.SelectedButton(btn);
+            dialogueController.SelectedButton(btn);
         }
     }
 }
