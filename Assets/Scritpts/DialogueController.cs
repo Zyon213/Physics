@@ -6,37 +6,20 @@ using UnityEngine.UI;
 
 public class DialogueController : MonoBehaviour
 {
+    [SerializeField] private Color hoverColor;
+    [SerializeField] private Button[] answerButtons;
+
     private float dialogueSpeed = 0.01f;
     private float buttonDuration = 2f;
     private Coroutine corotine;
     private LeanTweenType easeElastic = LeanTweenType.easeOutElastic;
-    [SerializeField] private Color hoverColor;
-    [SerializeField] private Button[] answerButtons;
-
     public Color initialColor;
-
-    [Header("PRIVATE")]
-    private LoadScene loadScene;
-
     private float buttonScaleFactor = 1.2f;
-    private float zero = 0f;
-    private float delay = 0.5f;
     private Vector3 targetScale = Vector3.one;
-    private float transitionDuration = 3f;
-    private LeanTweenType easeLinear = LeanTweenType.linear;
     private LeanTweenType easeIn = LeanTweenType.easeInOutSine;
-    // selected answer button
     public string selectedChoiceName;
-
-    // dialogue box varialbles
-    private float dialogueBoxDuration = 0.75f;
     private LeanTweenType easeQuad = LeanTweenType.easeOutQuad;
 
-
-    private void Start()
-    {
-        loadScene = GetComponent<LoadScene>();
-    }
     // scale dialogue box
     public void ScaleDialogueBox(GameObject gameObject)
     {
@@ -50,6 +33,13 @@ public class DialogueController : MonoBehaviour
         gameObject.SetActive(true);
         LeanTween.scale(gameObject, scale, duration).
             setEase(leanType);
+    }
+
+    public void ScaleDownObject(GameObject obj)
+    {
+
+        LeanTween.scale(obj, Vector3.zero, 0.5f).
+            setEase(LeanTweenType.easeInBack).setOnComplete(() => { obj.SetActive(false); });
     }
     // dialogue text writing
     public IEnumerator TypeText(TextMeshProUGUI tmpro, string dialogue, System.Action onComplete)
@@ -116,7 +106,6 @@ public class DialogueController : MonoBehaviour
             }
         }
     }
-
 
     // get the selected button 
     public void SelectedButton(Button selectedBtn)
@@ -190,10 +179,8 @@ public class DialogueController : MonoBehaviour
                 answer.isChoiceSelected = false;
                 LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
                 LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
-                    .setOnUpdate((Color col) => { graphic.color = col; });
-                
+                    .setOnUpdate((Color col) => { graphic.color = col; });                
             }
-
         }
     }
 }

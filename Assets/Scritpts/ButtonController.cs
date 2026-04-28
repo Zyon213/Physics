@@ -42,12 +42,13 @@ public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public void OnPointerExit(PointerEventData eventData)
     {
         LeanTween.cancel(gameObject);
-        /*
-                LeanTween.scale(gameObject, Vector3.one, buttonDuration)
-                    .setEase(easeIn);
-                LeanTween.value(gameObject, graphic.color, graphic.color, buttonDuration)
-                    .setOnUpdate((Color col) => { graphic.color = col; });
-        */
+
+         if (graphic != null)
+        {
+            // initialColor = graphic.color;
+            initialColor = Color.white;
+        }
+
         ChoiceController control = gameObject.GetComponent<ChoiceController>();
         AnswerController answer = gameObject.GetComponent<AnswerController>();
         if (control != null && control.isChoiceSelected)

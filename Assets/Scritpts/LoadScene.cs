@@ -13,27 +13,31 @@ public class LoadScene : MonoBehaviour
     private RectTransform[] cubes;
     private float duration = 1.0f;
     private float rectMoveX = 7091f;
-    private void Awake()
+
+    private void Start()
     {
+        SetSafeOjbect(circleTransition, false);
+        if (rectTransition != null)
+            rectTransition.SetActive(false);
         if (cubeTransition != null)
         {
             cubeTransition.SetActive(false);
             cubes = cubeTransition.GetComponentsInChildren<RectTransform>();
             MinimizeCube();
         }
-    }
-    private void Start()
-    {
-        SetSafeOjbect(circleTransition, false);
-        if (rectTransition != null)
-            rectTransition.SetActive(false);
-    }
-    private void SetSafeOjbect(GameObject cubeTransition, bool state)
-    {
-        if (cubeTransition != null)
+
+        if (topBar != null && bottomBar != null)
         {
-            cubeTransition.SetActive(state);
-            cubeTransition.transform.localScale = Vector3.zero;
+            topBar.SetActive(false);
+            bottomBar.SetActive(false);
+        }
+    }
+    private void SetSafeOjbect(GameObject obj, bool state)
+    {
+        if (obj != null)
+        {
+            obj.SetActive(state);
+            obj.transform.localScale = Vector3.zero;
         }
     }
     // minimize array of cubes
@@ -74,6 +78,8 @@ public class LoadScene : MonoBehaviour
     {
         float screenHeight = Screen.height;
 
+        topBar.SetActive(true);
+        bottomBar.SetActive(true);
         LeanTween.moveY(topBar.GetComponent<RectTransform>(), -screenHeight / 2, 2f)
             .setEaseOutQuint();
         LeanTween.moveY(bottomBar.GetComponent<RectTransform>(), screenHeight / 2, 2f)
@@ -84,7 +90,8 @@ public class LoadScene : MonoBehaviour
     public void GateTransitionOnly(GameObject obj)
     {
         float screenHeight = Screen.height;
-
+        topBar.SetActive(true);
+        bottomBar.SetActive(true);
         LeanTween.moveY(topBar.GetComponent<RectTransform>(), -screenHeight / 2, 2f)
             .setEaseOutQuint();
         LeanTween.moveY(bottomBar.GetComponent<RectTransform>(), screenHeight / 2, 2f)
@@ -106,6 +113,8 @@ public class LoadScene : MonoBehaviour
 
             yield return new WaitForSeconds(0.02f);
         }
+        yield return new WaitForSeconds(0.2f);
+
         SceneManager.LoadScene(sceneName);   
     }
 }
