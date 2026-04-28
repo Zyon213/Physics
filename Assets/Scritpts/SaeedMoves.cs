@@ -8,7 +8,7 @@ public class SaeedMoves : MonoBehaviour
     [SerializeField] private GameObject saeed;
     [SerializeField] private Transform targetPos;
 
-    private QuestionController questionController;
+    private FirstQuestion firstQuest;
     private Animator anim;
 
     private void Awake()
@@ -19,7 +19,7 @@ public class SaeedMoves : MonoBehaviour
             anim.SetTrigger("Idle");
         }
 
-        questionController = GetComponent<QuestionController>();
+        firstQuest = GetComponent<FirstQuestion>();
         MoveSaeed();
     }
 
@@ -35,7 +35,8 @@ public class SaeedMoves : MonoBehaviour
         LeanTween.scale(saeed, new Vector3(0.35f, 0.35f, 1f), 0.8f)
             .setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
-                StartCoroutine(questionController.LoadQuestion());
+               firstQuest.LoadDialogueBox();
+                StartCoroutine(firstQuest.LoadQuestion());
             });
     }
 }

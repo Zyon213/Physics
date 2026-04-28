@@ -10,16 +10,17 @@ public class DialogueController : MonoBehaviour
     [SerializeField] private Button[] answerButtons;
 
     private float dialogueSpeed = 0.01f;
-    private float buttonDuration = 2f;
-    private Coroutine corotine;
-    private LeanTweenType easeElastic = LeanTweenType.easeOutElastic;
-    public Color initialColor;
     private float buttonScaleFactor = 1.2f;
+    private Coroutine corotine;
+    public Color initialColor;
     private Vector3 targetScale = Vector3.one;
-    private LeanTweenType easeIn = LeanTweenType.easeInOutSine;
     public string selectedChoiceName;
+    private LeanTweenType easeLinear = LeanTweenType.linear;
+    private LeanTweenType easeIn = LeanTweenType.easeInOutSine;
+    private LeanTweenType easeElastic = LeanTweenType.easeOutElastic;
     private LeanTweenType easeQuad = LeanTweenType.easeOutQuad;
 
+    public float buttonDuration = 2f;
     // scale dialogue box
     public void ScaleDialogueBox(GameObject gameObject)
     {
@@ -44,16 +45,23 @@ public class DialogueController : MonoBehaviour
     // dialogue text writing
     public IEnumerator TypeText(TextMeshProUGUI tmpro, string dialogue, System.Action onComplete)
     {
-        tmpro.text = dialogue;
-        tmpro.maxVisibleCharacters = 0;
+        yield return new WaitForEndOfFrame();
 
-        int length = dialogue.Length;
-        for (int i = 0; i <= length; i++)
+        if (tmpro != null && dialogue != null)
         {
-            tmpro.maxVisibleCharacters = i;
-            yield return new WaitForSeconds(dialogueSpeed);
+            CanvasGroup canvas = tmpro.GetComponent<CanvasGroup>();
+            if (canvas != null) canvas.alpha = 1;
+            tmpro.text = dialogue;
+            tmpro.maxVisibleCharacters = 0;
+
+            int length = dialogue.Length;
+            for (int i = 0; i <= length; i++)
+            {
+                tmpro.maxVisibleCharacters = i;
+                yield return new WaitForSeconds(dialogueSpeed);
+            }
+            onComplete?.Invoke();
         }
-        onComplete?.Invoke();
     }
 
     public void ShowQuestion(Button[] buttons, Button button, TextMeshProUGUI tmpro, string text)
@@ -83,6 +91,7 @@ public class DialogueController : MonoBehaviour
             obj.transform.localScale = Vector3.zero;
         }
     }
+
     // Display answer buttons
     public IEnumerator ShowAnswerButtons(Button[] buttons)
     {
@@ -183,5 +192,17 @@ public class DialogueController : MonoBehaviour
             }
         }
     }
+
+    public void FadeOutObject(GameObject obj)
+    {
+        if (obj == null) return;
+        CanvasGroup canvas = obj.GetComponent<CanvasGroup>();
+        LeanTween.alphaCanvas(canvas, 0f, 1f)
+            .setEase(easeLinear).setOnComplete(() =>
+            {
+                obj.SetActive(false);
+            });
+    }
+
 }
 
