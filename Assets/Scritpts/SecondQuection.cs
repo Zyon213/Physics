@@ -6,6 +6,8 @@ using TMPro;
 public class SecondQuection : MonoBehaviour
 {
     [SerializeField] private Button continueButton;
+    [SerializeField] private GameObject dialogueBox;
+
     [SerializeField] private TextMeshProUGUI questionTMP;
     [SerializeField] private Button[] answerButtons;
     [SerializeField] private GameObject hintPage;
@@ -17,6 +19,7 @@ public class SecondQuection : MonoBehaviour
 
     private Coroutine corotine;
     private Coroutine dialogueCorotine;
+    private LoadScene loadScene;
 
     [Header("PRIVATE")]
     private LeanTweenType easeElastic = LeanTweenType.easeOutElastic;
@@ -41,20 +44,11 @@ public class SecondQuection : MonoBehaviour
         dialogueController.SetObjectState(saturn, false);
     }
 
-    /*
-    public void LoadQuestion()
+    private void Start()
     {
-        secondQuest.SetActive(true);
-        secondQuest.transform.localScale = Vector3.one;
-        SecondQuestion(answerButtons, continueButton, questionTMP, questText);
-        DisplaySecondDialogue();
-        //    yield return new WaitForSeconds(0.7f);
-        saturn.transform.localScale = Vector3.one;
-        dialogueController.ScaleObject(saturn, Vector3.one * 6, easeElastic, 2f);
-
+        loadScene = GetComponent<LoadScene>();
     }
-    */
-    
+
     public IEnumerator LoadQuestion()
     {
         yield return new WaitForEndOfFrame();
@@ -66,18 +60,9 @@ public class SecondQuection : MonoBehaviour
         saturn.transform.localScale = Vector3.one;
         dialogueController.ScaleObject(saturn, Vector3.one * 10f, easeElastic, 2f);
 
-
-     //   secondQuest.SetActive(true);
-     //   secondQuest.transform.localScale = Vector3.one;
-     //   yield return new WaitForSeconds(0.2f);
-     //   SecondQuestion(answerButtons, continueButton, questionTMP, questText);
-
-
-    //    dialogueController.ShowQuestion(answerButtons, continueButton, questionTMP, questText);
-
     }
     
-
+    
     private void DisplaySecondDialogue()
     {
         if (questionTMP != null)
@@ -86,8 +71,8 @@ public class SecondQuection : MonoBehaviour
              //   dialogueController.ShowButton(continueButton);
 
             }));
-       // StartCoroutine(dialogueController.ShowChoiceButtons());
     }
+    
     public IEnumerator TypeText(TextMeshProUGUI tmpro, string dialogue, System.Action onComplete)
     {
         yield return new WaitForEndOfFrame();
@@ -142,7 +127,6 @@ public class SecondQuection : MonoBehaviour
     }
 
     // hide object
-
     IEnumerator HideObjects()
     {
         yield return new WaitForEndOfFrame();
@@ -155,56 +139,12 @@ public class SecondQuection : MonoBehaviour
         thirdQuest.SetActive(true);
     }
 
-/*
-    public IEnumerator TypeText(TextMeshProUGUI tmpro, string dialogue, System.Action onComplete)
+    // load home page
+    public void LoadHomePage()
     {
-        if (tmpro != null && dialogue != null)
-        {
-            CanvasGroup canvas = tmpro.GetComponent<CanvasGroup>();
-            if (canvas != null) canvas.alpha = 1;
-            tmpro.text = dialogue;
-            tmpro.maxVisibleCharacters = 0;
-
-            int length = dialogue.Length;
-            for (int i = 0; i <= length; i++)
-            {
-                tmpro.maxVisibleCharacters = i;
-                yield return new WaitForSeconds(0.01f);
-            }
-            onComplete?.Invoke();
-        }
-        else
-        {
-            Debug.Log("string is empyt");
-        }
+        if (loadScene == null) return;
+        dialogueController.ScaleDownObject(dialogueBox);
+        dialogueController.ScaleDownObject(secondQuest);
+        loadScene.CubeTransition("Scene01");
     }
-
-    public void ShowQuestion(Button[] buttons, Button button, TextMeshProUGUI tmpro, string text)
-    {
-        if (text != null)
-            corotine = StartCoroutine(TypeText(tmpro, text, () =>
-            {
-                ShowButton(button, 0.2f);
-                StartCoroutine(ShowAnswerButtons(buttons));
-
-            }));
-    }
-    public void ShowButton(Button button, float duration)
-    {
-        button.gameObject.SetActive(true);
-        button.gameObject.transform.localScale = Vector3.zero;
-        LeanTween.scale(button.gameObject, Vector3.one, duration)
-            .setDelay(0.2f).setEase(easeElastic);
-    }
-    public IEnumerator ShowAnswerButtons(Button[] buttons)
-    {
-        yield return new WaitForEndOfFrame();
-
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            ShowButton(buttons[i], 1.5f);
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-*/
 }

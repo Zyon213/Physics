@@ -13,6 +13,7 @@ public class DialogueController : MonoBehaviour
     private float buttonScaleFactor = 1.2f;
     private Coroutine corotine;
     public Color initialColor;
+    private Color[] butInitialColors;
     private Vector3 targetScale = Vector3.one;
     public string selectedChoiceName;
     private LeanTweenType easeLinear = LeanTweenType.linear;
@@ -22,6 +23,10 @@ public class DialogueController : MonoBehaviour
 
     public float buttonDuration = 2f;
     // scale dialogue box
+    private void Awake()
+    {
+        GetInitialButtonColor();
+    }
     public void ScaleDialogueBox(GameObject gameObject)
     {
         gameObject.SetActive(true);
@@ -173,24 +178,57 @@ public class DialogueController : MonoBehaviour
         }
     }
    
+    private void GetInitialButtonColor()
+    {
+        if (answerButtons == null || answerButtons.Length == 0) return;
+        
+        butInitialColors = new Color[answerButtons.Length];
+         for (int i = 0; i < answerButtons.Length; i++)
+        {
+            if (answerButtons[i] == null) return;
+            var graphic = answerButtons[i].GetComponent<Graphic>();
+            if (graphic == null) return;
+     
+            butInitialColors[i] = graphic.color;
+        }
+    }
     // reset answer buttons
     public void ResetAnswerButtons()
     {
         selectedChoiceName = null;
+        for (int i = 0; i <answerButtons.Length; i++)
+        {
+            if (answerButtons[i] == null) continue;
+
+            AnswerController answer = answerButtons[i].GetComponent<AnswerController>();
+            var graphic = answerButtons[i].GetComponent<Graphic>();
+
+            if (answer != null && graphic != null)
+            {
+                answer.isChoiceSelected = false;
+                LeanTween.scale(answerButtons[i].gameObject, targetScale, 0.2f).setEase(easeIn);
+                LeanTween.value(answerButtons[i].gameObject, graphic.color, butInitialColors[i], buttonDuration)
+                    .setOnUpdate((Color col) => { graphic.color = col; });
+            }
+        }
+
+    /*
         foreach (Button button in answerButtons)
         {
             if (button == null) continue;
 
             AnswerController answer = button.GetComponent<AnswerController>();
             var graphic = button.GetComponent<Graphic>();
+
             if (answer != null && graphic != null)
             {
                 answer.isChoiceSelected = false;
                 LeanTween.scale(button.gameObject, targetScale, 0.2f).setEase(easeIn);
-                LeanTween.value(button.gameObject, graphic.color, initialColor, buttonDuration)
+                LeanTween.value(button.gameObject, graphic.color, butInitialColors[i], buttonDuration)
                     .setOnUpdate((Color col) => { graphic.color = col; });                
             }
         }
+    */
     }
 
     public void FadeOutObject(GameObject obj)
@@ -203,6 +241,4 @@ public class DialogueController : MonoBehaviour
                 obj.SetActive(false);
             });
     }
-
 }
-

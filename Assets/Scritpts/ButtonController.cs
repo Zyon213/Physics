@@ -21,8 +21,12 @@ public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private void Start()
     {
         graphic = GetComponent<Graphic>();
-   //     if (graphic != null)
-    //        initialColor = graphic.color;
+        if (graphic != null)
+        {
+            initialColor = graphic.color;
+            // initialColor = Color.white;
+        }
+
     }
 
     // scale up and change color buttons when hover
@@ -43,10 +47,10 @@ public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         LeanTween.cancel(gameObject);
 
-         if (graphic != null)
+    //     if (graphic != null)
         {
-            // initialColor = graphic.color;
-            initialColor = Color.white;
+     //       initialColor = graphic.color;
+          // initialColor = Color.white;
         }
 
         ChoiceController control = gameObject.GetComponent<ChoiceController>();

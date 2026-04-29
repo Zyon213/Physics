@@ -6,21 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Earth.unity
-    guid: 9c5da55c8225ee9449bad3755f8241f7
-  - enabled: 1
-    path: Assets/Scenes/Life.unity
-    guid: 234274f6e0897da4ba3083863f551cc9
-  - enabled: 1
-    path: Assets/Scenes/Physical.unity
-    guid: bcbf8a4fa22b8cd40b8d934164691405
-  - enabled: 1
     path: Assets/Scenes/Scene01.unity
     guid: c3914662f8839ab4fbc43e4559849c95
   - enabled: 1
-    path: Assets/Scenes/Scene02.unity
-    guid: 94174c64a2aadda4d97df6cdb5a0397b
-  - enabled: 1
     path: Assets/Scenes/Technology.unity
     guid: 84dac839b3b408a4f8cb2690a5352904
+  - enabled: 1
+    path: Assets/Scenes/Earth.unity
+    guid: db4d0963b6c476f478007b6099e14fc8
+  - enabled: 1
+    path: Assets/Scenes/Life.unity
+    guid: 286057f4bc145444a90f345779886d1f
+  - enabled: 1
+    path: Assets/Scenes/Physical.unity
+    guid: 7d6265b2c40e99e43b9b1746cf42e785
   m_configObjects: {}

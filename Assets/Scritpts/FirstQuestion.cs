@@ -11,6 +11,7 @@ public class FirstQuestion : MonoBehaviour
     [SerializeField] private TextMeshProUGUI firstQuestionTMP;
     [SerializeField] private GameObject earth;
     [SerializeField] private GameObject mars;
+    [SerializeField] private GameObject rocket;
     [SerializeField] private Button[] answerButtons;
     [SerializeField] private GameObject hintPage;
     [SerializeField] private GameObject correctPage;
@@ -48,6 +49,7 @@ public class FirstQuestion : MonoBehaviour
         }
         dialogueController.SetObjectState(earth, false);
         dialogueController.SetObjectState(mars, false);
+        dialogueController.SetObjectState(rocket, false);
         dialogueController.HideButtons(answerButtons);
         dialogueController.SetObjectState(hintPage, false);
         dialogueController.SetObjectState(correctPage, false);
@@ -78,9 +80,12 @@ public class FirstQuestion : MonoBehaviour
 
         dialogueController.ScaleObject(earth, Vector3.one * 8, easeElastic, 2f);
 
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.5f);
 
         dialogueController.ScaleObject(mars, Vector3.one * 4, easeElastic, 2f);
+        yield return new WaitForSeconds(0.5f);
+
+        dialogueController.ScaleObject(rocket, Vector3.one, easeElastic, 2f);
     }
 
     // check the correct answer
@@ -136,6 +141,9 @@ public class FirstQuestion : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
         dialogueController.ScaleDownObject(mars);
+
+        yield return new WaitForSeconds(0.2f);
+        dialogueController.ScaleDownObject(rocket);
 
         onComplete?.Invoke();
     }
